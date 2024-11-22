@@ -38,7 +38,7 @@ return [
 
         'invoices' => [
             'driver' => 's3',
-            'root' => storage_path('app/invoices'),
+            'root' => 'app/invoices',
             // 'url' => env('APP_URL') . '/storage',
             // 'visibility' => 'private',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -53,7 +53,7 @@ return [
 
         'public' => [
             'driver' => 's3',
-            'root' => storage_path('app/public'),
+            'root' => 'app/public',
             // 'url' => env('APP_URL') . '/storage',
             // 'visibility' => 'public',
             // 'throw' => false,
