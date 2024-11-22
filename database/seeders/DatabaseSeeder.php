@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             LabelSeeder::class,
             CurrencySeeder::class,
             CountrySeeder::class,
+            UserSeeder::class,
         ]);
 
         // if ($this->command->confirm('Seed development data?', false)) {
