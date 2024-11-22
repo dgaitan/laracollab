@@ -8,13 +8,6 @@ use Illuminate\Database\Seeder;
 class UserSeeder extends Seeder
 {
     private array $jobTitleToRole = [
-        'Frontend Developer' => 'developer',
-        'Backend Developer' => 'developer',
-        'Fullstack Developer' => 'developer',
-        'QA Engineer' => 'qa engineer',
-        'Designer' => 'designer',
-        'Client' => 'client',
-        'Manager' => 'manager',
         'Owner' => 'admin',
     ];
 
@@ -24,7 +17,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $rolesExceptClient = collect(RoleSeeder::$roles)
-            ->filter(fn ($i) => $i !== 'client')
+            ->filter(fn($i) => $i !== 'client')
             ->toArray();
 
         foreach ($rolesExceptClient as $role) {
@@ -33,9 +26,9 @@ class UserSeeder extends Seeder
                 ->assignRole($role);
         }
 
-        User::factory(20)
-            ->create()
-            ->each(fn (User $user) => $user->assignRole($this->jobTitleToRole[$user->job_title]));
+        // User::factory(20)
+        //     ->create()
+        //     ->each(fn (User $user) => $user->assignRole($this->jobTitleToRole[$user->job_title]));
     }
 
     private function getJobTitle(string $role): string

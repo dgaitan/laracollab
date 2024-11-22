@@ -21,23 +21,23 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
         ]);
 
-        if ($this->command->confirm('Seed development data?', false)) {
-            $this->call([
-                UserSeeder::class,
-                OwnerCompanySeeder::class,
-                ClientSeeder::class,
-                ClientCompanySeeder::class,
-            ]);
+        // if ($this->command->confirm('Seed development data?', false)) {
+        //     $this->call([
+        //         UserSeeder::class,
+        //         OwnerCompanySeeder::class,
+        //         ClientSeeder::class,
+        //         ClientCompanySeeder::class,
+        //     ]);
 
-            auth()->setUser(User::role('admin')->first());
+        //     auth()->setUser(User::role('admin')->first());
 
-            $this->call([
-                ProjectSeeder::class,
-                TaskGroupSeeder::class,
-                TasksSeeder::class,
-            ]);
-        } else {
-            $this->call([ProductionSeeder::class]);
-        }
+        //     $this->call([
+        //         ProjectSeeder::class,
+        //         TaskGroupSeeder::class,
+        //         TasksSeeder::class,
+        //     ]);
+        // } else {
+        //     $this->call([ProductionSeeder::class]);
+        // }
     }
 }
