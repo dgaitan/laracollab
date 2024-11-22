@@ -56,7 +56,7 @@ class CreateTask
                 $filename = strtolower(Str::ulid()) . '.' . $item->getClientOriginalExtension();
                 $filepath = "tasks/{$task->id}/{$filename}";
 
-                $item->storeAs('s3', $filepath);
+                $item->storeAs('public', $filepath);
 
                 $thumbFilepath = $this->generateThumb($item, $task, $filename);
 
