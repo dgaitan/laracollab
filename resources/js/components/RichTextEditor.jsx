@@ -6,7 +6,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useImperativeHandle, useEffect } from "react";
 import suggestion from "./RichTextEditor/Mention/suggestion.js";
 import classes from "./css/RichTextEditor.module.css";
 
@@ -40,6 +40,12 @@ const RichTextEditor = forwardRef(function RichTextEditor(
       editor.commands.setContent(content);
     },
   }));
+
+  useEffect(() => {
+    if (content !== editor.getHTML()) {
+      editor.commands.setContent(content);
+    }
+  }, [editor, content]);
 
   const computedColorScheme = useComputedColorScheme();
 
