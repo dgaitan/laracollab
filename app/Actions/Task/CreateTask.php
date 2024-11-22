@@ -63,8 +63,8 @@ class CreateTask
                 return [
                     'user_id' => auth()->id(),
                     'name' => $item->getClientOriginalName(),
-                    'path' => "/storage/$filepath",
-                    'thumb' => $thumbFilepath ? "/storage/$thumbFilepath" : null,
+                    'path' => Storage::disk('s3')->url($filepath),
+                    'thumb' => $thumbFilepath ? Storage::disk('s3')->url($thumbFilepath) : null,
                     'type' => $item->getClientMimeType(),
                     'size' => $item->getSize(),
                 ];
