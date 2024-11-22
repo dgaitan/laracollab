@@ -51,20 +51,40 @@ class CreateTask
 
     public function uploadAttachments(Task $task, array $items, $dispatchEvent = true): Collection
     {
+        // $rows = collect($items)
+        //     ->map(function (UploadedFile $item) use ($task) {
+        //         $filename = strtolower(Str::ulid()) . '.' . $item->getClientOriginalExtension();
+        //         $filepath = "tasks/{$task->id}/{$filename}";
+
+        //         $item->storeAs('s3', $filepath);
+
+        //         $thumbFilepath = $this->generateThumb($item, $task, $filename);
+
+        //         return [
+        //             'user_id' => auth()->id(),
+        //             'name' => $item->getClientOriginalName(),
+        //             'path' => "/storage/$filepath",
+        //             'thumb' => $thumbFilepath ? "/storage/$thumbFilepath" : null,
+        //             'type' => $item->getClientMimeType(),
+        //             'size' => $item->getSize(),
+        //         ];
+        //     });
         $rows = collect($items)
             ->map(function (UploadedFile $item) use ($task) {
                 $filename = strtolower(Str::ulid()) . '.' . $item->getClientOriginalExtension();
                 $filepath = "tasks/{$task->id}/{$filename}";
 
-                $item->storeAs('public', $filepath);
+                // Store the file on the S3 disk
+                $item->storeAs('', $filepath, 's3');
 
+                // Generate the thumbnail and store it on S3
                 $thumbFilepath = $this->generateThumb($item, $task, $filename);
 
                 return [
                     'user_id' => auth()->id(),
                     'name' => $item->getClientOriginalName(),
-                    'path' => "/storage/$filepath",
-                    'thumb' => $thumbFilepath ? "/storage/$thumbFilepath" : null,
+                    'path' => Storage::disk('s3')->url($filepath),
+                    'thumb' => $thumbFilepath ? Storage::disk('s3')->url($thumbFilepath) : null,
                     'type' => $item->getClientMimeType(),
                     'size' => $item->getSize(),
                 ];
