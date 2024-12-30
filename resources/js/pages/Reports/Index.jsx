@@ -22,12 +22,12 @@ import { IconClock } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import round from 'lodash/round';
 
-const LoggedTimeSum = () => {
-  let { projects, clientCompanies, dropdowns } = usePage().props;
+const Index = () => {
+  let { tasks, clientCompanies, dropdowns } = usePage().props;
 
   const params = currentUrlParams();
 
-  const [form, submit, updateValue] = useForm('get', route('reports.logged-time.sum'), {
+  const [form, submit, updateValue] = useForm('get', route('reports.logged-time.index'), {
     projects: params.projects?.map(String) || [],
     users: params.users?.map(String) || [],
     dateRange:
@@ -39,13 +39,13 @@ const LoggedTimeSum = () => {
     everything: params.everything !== undefined ? params.everything : false,
   });
 
-  const formatMoney = (value, clientCompanyId) => {
-    const currency = clientCompanies.find(i => i.id === clientCompanyId)?.currency;
-    return money(value, currency?.code, currency?.decimals);
-  };
+  const calculateHours = task => {
+    if (task.time_logs.length === 0) {
+      return 0;
+    }
 
-  const calculateProfit = row => {
-    return row.total_hours * row.project_rate - row.total_hours * row.user_rate;
+    let minutes = task.time_logs.reduce((acc, log) => acc + log.minutes, 0);
+    return minutes / 60;
   };
 
   return (
@@ -135,71 +135,54 @@ const LoggedTimeSum = () => {
       </ContainerBox>
 
       <Box mt='xl'>
-        {Object.keys(projects).length ? (
-          Object.keys(projects).map(projectId => (
-            <ContainerBox
-              key={projectId}
-              px={35}
-              py={15}
-              my={25}
-            >
-              <Text
-                fz={20}
-                fw={600}
-              >
-                {projects[projectId][0].project_name}
-              </Text>
-              <Table
-                horizontalSpacing='xl'
-                verticalSpacing='md'
-                striped
-                highlightOnHover
-              >
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th>User</Table.Th>
-                    <Table.Th>Logged time</Table.Th>
-                    <Table.Th>Project rate</Table.Th>
-                    <Table.Th>User rate</Table.Th>
-                    <Table.Th>Expense</Table.Th>
-                    <Table.Th>Profit</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {projects[projectId].map(row => (
-                    <Table.Tr key={row.user_id}>
-                      <Table.Td>{row.user_name}</Table.Td>
-                      <Table.Td>{round(row.total_hours, 2).toFixed(2)} h</Table.Td>
-                      <Table.Td>{formatMoney(row.project_rate, row.client_company_id)}</Table.Td>
-                      <Table.Td opacity={row.user_rate === 0 ? 0.3 : 1}>
-                        {formatMoney(row.user_rate, row.client_company_id)}
-                      </Table.Td>
-                      <Table.Td opacity={row.user_rate === 0 ? 0.3 : 1}>
-                        {formatMoney(row.total_hours * row.user_rate, row.client_company_id)}
-                      </Table.Td>
-                      <Table.Td c={calculateProfit(row) < 0 ? 'red.7' : 'green.7'}>
-                        {formatMoney(calculateProfit(row), row.client_company_id)}
-                      </Table.Td>
+        {Object.keys(tasks).length ? (
+            <div>
+                <Table
+                    horizontalSpacing='xl'
+                    verticalSpacing='md'
+                    striped
+                    highlightOnHover
+                >
+                    <Table.Thead>
+                    <Table.Tr>
+                        <Table.Th>Task Name</Table.Th>
+                        <Table.Th>Project</Table.Th>
+                        <Table.Th>User</Table.Th>
+                        <Table.Th>Time Logged</Table.Th>
                     </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
-            </ContainerBox>
-          ))
+                    </Table.Thead>
+                    <Table.Tbody>
+                    {Object.values(tasks).map(task => (
+                        <Table.Tr key={task.id}>
+                        <Table.Td>{task.name}</Table.Td>
+                        <Table.Td>{task.project.name}</Table.Td>
+                        <Table.Td>{task.assigned_to_user?.name}</Table.Td>
+                        <Table.Td>{round(calculateHours(task), 2).toFixed(2)} h</Table.Td>
+                        </Table.Tr>
+                    ))}
+                    </Table.Tbody>
+                </Table>
+                <Text
+                    fz={20}
+                    fw={600}
+                >
+                    Total Hours: {round(Object.values(tasks).reduce((acc, task) => acc + calculateHours(task), 0), 2).toFixed(2)} h
+                </Text>
+            </div>
         ) : (
-          <Center mih={300}>
-            <EmptyWithIcon
-              title='No logged time found'
-              subtitle='Try changing selected filters'
-              icon={IconClock}
-            />
-          </Center>
+            <Center mih={300}>
+                <EmptyWithIcon
+                title='No logged time found'
+                subtitle='Try changing selected filters'
+                icon={IconClock}
+                />
+            </Center>
         )}
       </Box>
     </>
   );
 };
 
-LoggedTimeSum.layout = page => <Layout title='Logged time sum'>{page}</Layout>;
+Index.layout = page => <Layout title='Logged time'>{page}</Layout>;
 
-export default LoggedTimeSum;
+export default Index;

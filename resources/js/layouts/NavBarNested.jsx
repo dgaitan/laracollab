@@ -101,6 +101,12 @@ export default function Sidebar() {
         visible: can("view logged time sum report") || can("view daily logged time report"),
         links: [
           {
+            label: "Logged time",
+            link: route("reports.logged-time.index"),
+            active: route().current("reports.logged-time.index"),
+            visible: can("view logged time sum report"),
+          },
+          {
             label: "Logged time sum",
             link: route("reports.logged-time.sum"),
             active: route().current("reports.logged-time.sum"),
