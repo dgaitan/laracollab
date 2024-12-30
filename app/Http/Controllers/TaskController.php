@@ -30,12 +30,13 @@ class TaskController extends Controller
 
         $groups = $project
             ->taskGroups()
-            ->when($request->has('archived'), fn ($query) => $query->onlyArchived())
+            ->when($request->has('archived'), fn($query) => $query->onlyArchived())
+            // ->when($request->has('completed'), fn($query) => $query->where('completed_at', '!=', null))
             ->get();
 
         $groupedTasks = $project
             ->taskGroups()
-            ->with(['project' => fn ($query) => $query->withArchived()])
+            ->with(['project' => fn($query) => $query->withArchived()])
             ->get()
             ->mapWithKeys(function (TaskGroup $group) use ($request, $project) {
                 return [
@@ -43,11 +44,12 @@ class TaskController extends Controller
                         ->where('group_id', $group->id)
                         ->searchByQueryString()
                         ->filterByQueryString()
-                        ->when($request->user()->hasRole('client'), fn ($query) => $query->where('hidden_from_clients', false))
-                        ->when($request->has('archived'), fn ($query) => $query->onlyArchived())
-                        ->when(! $request->has('status'), fn ($query) => $query->whereNull('completed_at'))
+                        ->when($request->user()->hasRole('client'), fn($query) => $query->where('hidden_from_clients', false))
+                        ->when($request->has('archived'), fn($query) => $query->onlyArchived())
+                        ->when(! $request->has('status') && !$request->has('completed'), fn($query) => $query->whereNull('completed_at'))
+                        ->when($request->has('completed'), fn($query) => $query->whereNotNull('completed_at'))
                         ->withDefault()
-                        ->when($project->isArchived(), fn ($query) => $query->with(['project' => fn ($query) => $query->withArchived()]))
+                        ->when($project->isArchived(), fn($query) => $query->with(['project' => fn($query) => $query->withArchived()]))
                         ->get(),
                 ];
             });

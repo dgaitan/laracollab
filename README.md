@@ -122,3 +122,7 @@ To use Pusher, sign up, then create a project and copy paste app keys to `.env` 
 - [ ] Write tests.
 - [ ] Optimize frontend and backend.
 - [ ] Consider moving to TypeScript.
+
+```
+pg_dump -h localhost -U forge -d vinge -F c -f prod.dump
+```
