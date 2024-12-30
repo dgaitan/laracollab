@@ -1,4 +1,5 @@
 import ArchivedFilterButton from "@/components/ArchivedFilterButton";
+import CompletedFilterButton from "@/components/CompletedFilterButton";
 import ClearFiltersButton from "@/components/ClearFiltersButton";
 import SearchInput from "@/components/SearchInput";
 import useTaskDrawerStore from "@/hooks/store/useTaskDrawerStore";
@@ -54,6 +55,7 @@ export default function Header() {
           </ActionIcon.Group>
 
           <ArchivedFilterButton />
+          <CompletedFilterButton />
         </Group>
       </Grid.Col>
       <Grid.Col span="content">
